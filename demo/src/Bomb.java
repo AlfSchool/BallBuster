@@ -9,6 +9,8 @@ public class Bomb extends JPanel implements Runnable{
     private JPanel sky;
     private JPanel ground;
 
+    private boolean hasExploded;
+
     public Bomb(double x, double y, double speed, JPanel sky, JPanel ground) {
         this.x = (int)x;
         this.y = (int)y;
@@ -17,12 +19,20 @@ public class Bomb extends JPanel implements Runnable{
         this.sky.add(this);
         this.setSize(10, 10);
         this.ground = ground;
+        this.hasExploded = false;
     }
 
     @Override
     protected void paintComponent(Graphics g) {
-        g.setColor(Color.BLACK);
+        if (this.hasExploded) {
+            return;
+        }
+        g.setColor(Color.RED);
         g.fillOval(0, 0, 10, 10);
+    }
+
+    public void explode() {
+        this.hasExploded = true;
     }
 
     @Override
@@ -36,5 +46,6 @@ public class Bomb extends JPanel implements Runnable{
             }
             this.setLocation(x, y);
         }
+        this.hasExploded = true;
     }
 }
