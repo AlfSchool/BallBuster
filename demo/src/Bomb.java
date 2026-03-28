@@ -10,11 +10,13 @@ public class Bomb extends JPanel implements Runnable{
     private JPanel ground;
 
     private boolean hasExploded;
+    private boolean[] gameOver;
 
-    public Bomb(double x, double y, double speed, JPanel sky, JPanel ground) {
+    public Bomb(double x, double y, double speed, JPanel sky, JPanel ground, boolean[] gameOver) {
         this.x = (int)x;
         this.y = (int)y;
         this.speed = speed;
+        this.gameOver = gameOver;
         this.sky = sky;
         this.sky.add(this);
         this.setSize(10, 10);
@@ -46,6 +48,7 @@ public class Bomb extends JPanel implements Runnable{
             }
             this.setLocation(x, y);
         }
+        this.gameOver[0] = true;
         this.hasExploded = true;
     }
 }

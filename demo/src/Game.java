@@ -7,8 +7,11 @@ public class Game {
     private JPanel sky;
     private JPanel ground;
     private Bomb[] bombs;
+    private boolean[] gameOver;
+    private JLabel score;
 
     public Game() {
+        this.gameOver = new boolean[]{false};
         //size and location of window
         this.frame = new JFrame("Falling bombs");
         this.frame.setContentPane(new JPanel());
@@ -34,13 +37,23 @@ public class Game {
 
         this.bombs = new Bomb[10];
         for (int i = 0; i < bombs.length; i++) {
-            this.bombs[i] = new Bomb(Math.random() * frame.getWidth(), 0, Math.random() * 10, this.sky, this.ground);
+            this.bombs[i] = new Bomb(
+                    Math.random() * frame.getWidth(), 0, Math.random() * 10,
+                    this.sky, this.ground, this.gameOver);
         }
         for (Bomb b : bombs) {
             new Thread(b).start();
         }
 
-        Cannon c = new Cannon(this.frame.getWidth() / 2, this.frame.getHeight() - GROUND_HEIGHT - 80, this.sky, this.bombs);
+        this.score = new JLabel("Score: 0");
+        this.score.setLocation(0, 0);
+        this.score.setSize(100, 20);
+        this.score.setForeground(Color.BLACK);
+        this.sky.add(this.score);
+
+        Cannon c = new Cannon(
+                this.frame.getWidth() / 2, this.frame.getHeight() - GROUND_HEIGHT - 80,
+                this.sky, this.bombs, this.gameOver, this.score);
         this.frame.addKeyListener(c);
         Thread cThread = new Thread(c);
         cThread.start();
