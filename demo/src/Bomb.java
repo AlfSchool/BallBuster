@@ -13,6 +13,7 @@ public class Bomb extends JPanel implements Runnable{
     private boolean[] gameOver;
 
     public Bomb(double x, double y, double speed, JPanel sky, JPanel ground, boolean[] gameOver) {
+        this.setVisible(false);
         this.x = (int)x;
         this.y = (int)y;
         this.speed = speed;
@@ -20,26 +21,26 @@ public class Bomb extends JPanel implements Runnable{
         this.sky = sky;
         this.sky.add(this);
         this.setSize(10, 10);
+        this.setLocation(this.x, this.y);
         this.ground = ground;
         this.hasExploded = false;
     }
 
     @Override
     protected void paintComponent(Graphics g) {
-        if (this.hasExploded) {
-            return;
-        }
         g.setColor(Color.RED);
         g.fillOval(0, 0, 10, 10);
     }
 
     public void explode() {
         this.hasExploded = true;
+        this.sky.remove(this);
     }
 
     @Override
     public void run() {
-        while (!ground.getBounds().intersects(this.getBounds())) {
+        this.setVisible(true);
+        while (!ground.getBounds().intersects(this.getBounds()) || this.hasExploded) {
             y += (int)this.speed;
             try {
                 Thread.sleep(100);
@@ -49,6 +50,7 @@ public class Bomb extends JPanel implements Runnable{
             this.setLocation(x, y);
         }
         this.gameOver[0] = true;
+        System.out.println("game over");
         this.hasExploded = true;
     }
 }

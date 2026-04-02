@@ -35,15 +35,8 @@ public class Game {
         this.ground.setPreferredSize(new Dimension(GROUND_WIDTH, GROUND_HEIGHT));
         this.frame.add(this.ground, BorderLayout.PAGE_END);
 
-        this.bombs = new Bomb[10];
-        for (int i = 0; i < bombs.length; i++) {
-            this.bombs[i] = new Bomb(
-                    Math.random() * frame.getWidth(), 0, Math.random() * 10,
-                    this.sky, this.ground, this.gameOver);
-        }
-        for (Bomb b : bombs) {
-            new Thread(b).start();
-        }
+        Terrorist terrorist = new Terrorist(this.sky, frame.getWidth(), this.ground, this.gameOver);
+        new Thread(terrorist).start();
 
         this.score = new JLabel("Score: 0");
         this.score.setLocation(0, 0);
@@ -53,7 +46,7 @@ public class Game {
 
         Cannon c = new Cannon(
                 this.frame.getWidth() / 2, this.frame.getHeight() - GROUND_HEIGHT - 80,
-                this.sky, this.bombs, this.gameOver, this.score);
+                this.sky, terrorist.bombs, this.gameOver, this.score);
         this.frame.addKeyListener(c);
         Thread cThread = new Thread(c);
         cThread.start();

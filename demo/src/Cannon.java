@@ -2,24 +2,25 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Cannon extends JPanel implements KeyListener, Runnable{
     private int x;
     private int y;
     private JPanel sky;
-    private Bomb[] bombs;
+    private ArrayList<Bomb> bombs;
     private boolean[] gameOver;
     private JLabel score;
 
-    public Cannon(int x, int y, JPanel sky, Bomb[] bombs, boolean[] gameOver, JLabel score) {
-        super();
-        this.gameOver = gameOver;
+    public Cannon(int x, int y, JPanel sky, ArrayList<Bomb> bombs, boolean[] gameOver, JLabel score) {
+        sky.add(this);
+        this.setLocation(x, y);
+        this.setSize(200, 400);
         this.x = x;
         this.y = y;
+        this.gameOver = gameOver;
         this.sky = sky;
-        this.setSize(200, 400);
-        this.setLocation(x, y);
-        this.sky.add(this);
         this.bombs = bombs;
         this.score = score;
     }
@@ -68,7 +69,6 @@ public class Cannon extends JPanel implements KeyListener, Runnable{
         if ((int)e.getKeyChar() == 32) {
             shoot();
         }
-        System.out.println((int)e.getKeyChar());
     }
 
     @Override
@@ -86,13 +86,13 @@ public class Cannon extends JPanel implements KeyListener, Runnable{
         private double speed;
 
         private JPanel sky;
-        private Bomb[] bombs;
+        private ArrayList<Bomb> bombs;
         private JLabel score;
 
         private boolean isOutOfScreen;
         private boolean hasExploded;
 
-        public Ball(double x, double y, double speed, JPanel sky, Bomb[] bombs, JLabel score) {
+        public Ball(double x, double y, double speed, JPanel sky, ArrayList<Bomb> bombs, JLabel score) {
             this.x = (int)x;
             this.y = (int)y;
             this.speed = speed;
@@ -106,13 +106,14 @@ public class Cannon extends JPanel implements KeyListener, Runnable{
         }
 
         public boolean collided() {
-            for (int i = 0; i < this.bombs.length; i++) {
-                if (this.bombs[i].getBounds().intersects(this.getBounds())) {
-                    this.bombs[i].explode();
+            for (int i = 0; i < this.bombs.size(); i++) {
+                if (this.bombs.get(i).getBounds().intersects(this.getBounds())) {
+                    this.bombs.get(i).explode();
+                    this.bombs.remove(i);
+                    this.sky.remove(this);
                     int currentPoints = Integer.parseInt(this.score.getText().split(" ")[1]);
                     int scorePointsUpdated =  currentPoints + 1;
                     this.score.setText("Score: " + scorePointsUpdated);
-                    System.out.println("updated text");
                     return true;
                 }
             }
@@ -121,12 +122,6 @@ public class Cannon extends JPanel implements KeyListener, Runnable{
 
         @Override
         protected void paintComponent(Graphics g) {
-            if (this.isOutOfScreen) {
-                return;
-            }
-            if (this.hasExploded) {
-                return;
-            }
             g.setColor(Color.BLACK);
             g.fillOval(0, 0, 10, 10);
         }
@@ -147,6 +142,7 @@ public class Cannon extends JPanel implements KeyListener, Runnable{
             } else {
                 this.hasExploded = true;
             }
+            this.sky.remove(this);
         }
     }
 }
