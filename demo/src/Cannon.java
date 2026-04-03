@@ -9,11 +9,12 @@ public class Cannon extends JPanel implements KeyListener, Runnable{
     private int x;
     private int y;
     private JPanel sky;
+    private Terrorist terrorist;
     private ArrayList<Bomb> bombs;
     private boolean[] gameOver;
     private JLabel score;
 
-    public Cannon(int x, int y, JPanel sky, ArrayList<Bomb> bombs, boolean[] gameOver, JLabel score) {
+    public Cannon(int x, int y, JPanel sky, Terrorist terrorist, boolean[] gameOver, JLabel score) {
         sky.add(this);
         this.setLocation(x, y);
         this.setSize(200, 400);
@@ -21,7 +22,8 @@ public class Cannon extends JPanel implements KeyListener, Runnable{
         this.y = y;
         this.gameOver = gameOver;
         this.sky = sky;
-        this.bombs = bombs;
+        this.terrorist = terrorist;
+        this.bombs = terrorist.getBombs();
         this.score = score;
     }
 
@@ -53,6 +55,7 @@ public class Cannon extends JPanel implements KeyListener, Runnable{
         sky.add(b);
         Thread cannonBall = new Thread(b);
         cannonBall.start();
+        this.terrorist.newBombsSpeed += 0.5;
     }
 
     @Override
@@ -89,9 +92,6 @@ public class Cannon extends JPanel implements KeyListener, Runnable{
         private ArrayList<Bomb> bombs;
         private JLabel score;
 
-        private boolean isOutOfScreen;
-        private boolean hasExploded;
-
         public Ball(double x, double y, double speed, JPanel sky, ArrayList<Bomb> bombs, JLabel score) {
             this.x = (int)x;
             this.y = (int)y;
@@ -101,8 +101,6 @@ public class Cannon extends JPanel implements KeyListener, Runnable{
             this.score = score;
             this.sky.add(this);
             this.setSize(10, 10);
-            this.isOutOfScreen = false;
-            this.hasExploded = false;
         }
 
         public boolean collided() {
@@ -136,11 +134,6 @@ public class Cannon extends JPanel implements KeyListener, Runnable{
                     throw new RuntimeException(e);
                 }
                 this.setLocation(x, y);
-            }
-            if (y > 0) {
-                this.isOutOfScreen = true;
-            } else {
-                this.hasExploded = true;
             }
             this.sky.remove(this);
         }

@@ -6,7 +6,6 @@ public class Game {
     private JFrame frame;
     private JPanel sky;
     private JPanel ground;
-    private Bomb[] bombs;
     private boolean[] gameOver;
     private JLabel score;
 
@@ -46,7 +45,7 @@ public class Game {
 
         Cannon c = new Cannon(
                 this.frame.getWidth() / 2, this.frame.getHeight() - GROUND_HEIGHT - 80,
-                this.sky, terrorist.bombs, this.gameOver, this.score);
+                this.sky, terrorist, this.gameOver, this.score);
         this.frame.addKeyListener(c);
         Thread cThread = new Thread(c);
         cThread.start();

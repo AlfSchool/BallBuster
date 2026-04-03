@@ -40,7 +40,7 @@ public class Bomb extends JPanel implements Runnable{
     @Override
     public void run() {
         this.setVisible(true);
-        while (!ground.getBounds().intersects(this.getBounds()) || this.hasExploded) {
+        while (!gameOver[0] && (!ground.getBounds().intersects(this.getBounds()) || this.hasExploded)) {
             y += (int)this.speed;
             try {
                 Thread.sleep(100);
@@ -49,8 +49,10 @@ public class Bomb extends JPanel implements Runnable{
             }
             this.setLocation(x, y);
         }
-        this.gameOver[0] = true;
-        System.out.println("game over");
-        this.hasExploded = true;
+        //this if happens just for the exploded cannon ball and not for each of them
+        if (!this.gameOver[0]) {
+            this.gameOver[0] = true;
+            this.hasExploded = true;
+        }
     }
 }
