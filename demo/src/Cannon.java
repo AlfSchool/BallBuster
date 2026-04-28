@@ -3,24 +3,25 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 
-public class Cannon extends JPanel implements KeyListener, Runnable{
+public class Cannon extends JPanel implements KeyListener, Runnable {
     private int x;
     private int y;
     private JPanel sky;
     private Terrorist terrorist;
     private ArrayList<Bomb> bombs;
     private boolean[] gameOver;
+    private boolean[] paused;
     private JLabel score;
 
-    public Cannon(int x, int y, JPanel sky, Terrorist terrorist, boolean[] gameOver, JLabel score) {
+    public Cannon(int x, int y, JPanel sky, Terrorist terrorist, boolean[] gameOver, JLabel score, boolean[] paused) {
         sky.add(this);
         this.setLocation(x, y);
         this.setSize(200, 400);
         this.x = x;
         this.y = y;
         this.gameOver = gameOver;
+        this.paused = paused;
         this.sky = sky;
         this.terrorist = terrorist;
         this.bombs = terrorist.getBombs();
@@ -51,7 +52,7 @@ public class Cannon extends JPanel implements KeyListener, Runnable{
     }
 
     public void shoot() {
-        Cannon.Ball b = new Cannon.Ball(this.x, this.y, 10, this.sky, this.bombs, this.score);
+        Cannon.Ball b = new Cannon.Ball(this.x, this.y, 10, this.sky, this.bombs, this.score, this.paused);
         sky.add(b);
         Thread cannonBall = new Thread(b);
         cannonBall.start();
@@ -61,6 +62,9 @@ public class Cannon extends JPanel implements KeyListener, Runnable{
     @Override
     public void keyTyped(KeyEvent e) {
         if (this.gameOver[0]) {
+            return;
+        }
+        if (this.paused[0]) {
             return;
         }
         if ((int)e.getKeyChar() == 100) {
@@ -92,7 +96,9 @@ public class Cannon extends JPanel implements KeyListener, Runnable{
         private ArrayList<Bomb> bombs;
         private JLabel score;
 
-        public Ball(double x, double y, double speed, JPanel sky, ArrayList<Bomb> bombs, JLabel score) {
+        private boolean[] paused;
+
+        public Ball(double x, double y, double speed, JPanel sky, ArrayList<Bomb> bombs, JLabel score, boolean[] paused) {
             this.x = (int)x;
             this.y = (int)y;
             this.speed = speed;
@@ -100,6 +106,7 @@ public class Cannon extends JPanel implements KeyListener, Runnable{
             this.bombs = bombs;
             this.score = score;
             this.sky.add(this);
+            this.paused = paused;
             this.setSize(10, 10);
         }
 
@@ -127,6 +134,14 @@ public class Cannon extends JPanel implements KeyListener, Runnable{
         @Override
         public void run() {
             while (y > 0 && !this.collided()) {
+                if (this.paused[0]) {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    continue;
+                }
                 y -= (int)this.speed;
                 try {
                     Thread.sleep(100);
