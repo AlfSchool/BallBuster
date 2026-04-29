@@ -5,7 +5,7 @@ public class EndScreen extends JPanel {
 
     public EndScreen(JFrame frame, JLabel score, Game game) {
         this.setLayout(new GridBagLayout());
-        this.setBackground(new Color(45, 31, 255));
+        this.setBackground(new Color(11, 14, 23));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.gridx = 0;
@@ -27,16 +27,14 @@ public class EndScreen extends JPanel {
         // Menu button
         JButton menuBtn = new JButton("Main Menu");
         menuBtn.setFont(new Font("Monospaced", Font.BOLD, 18));
-        menuBtn.setBackground(Color.GREEN);
-        menuBtn.setForeground(Color.BLACK);
+        menuBtn.setBackground(Color.WHITE);
+        menuBtn.setForeground(new Color(11, 14, 23));
         menuBtn.setFocusPainted(false);
         menuBtn.addActionListener(e -> {
             frame.getContentPane().removeAll();
-            frame.setLayout(new BorderLayout());
             StartScreen startScreen = new StartScreen(frame, game);
-            frame.add(startScreen, BorderLayout.CENTER);
+            frame.add(startScreen);
             frame.revalidate();
-            frame.repaint();
             frame.requestFocusInWindow();
         });
         gbc.gridy = 2;

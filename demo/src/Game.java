@@ -1,12 +1,16 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 public class Game {
     private JFrame frame;
     private JPanel sky;
     private JPanel ground;
     private boolean[] gameOver;
+    private Cannon cannon;
     private JLabel score;
     private boolean[] paused;
 
@@ -22,17 +26,41 @@ public class Game {
         this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    public void init(JFrame frame) {
+    public void init(JFrame frame, double terroristAttackSpeed) {
         this.gameOver = new boolean[]{false};
         this.paused = new boolean[]{false};
 
-        this.sky = new JPanel();
-        this.sky.setBackground(new Color(45, 31, 255));
+        BufferedImage skyImage = null;
+        try {
+            skyImage = ImageIO.read(new File("assets/sky.png"));
+        } catch (IOException ignored) {}
+        BufferedImage skyFinalImage = skyImage;
+        this.sky = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.drawImage(skyFinalImage, 0, 0, getWidth(), getHeight(), this);
+            }
+        };
+        this.sky.setOpaque(false);
         this.sky.setLayout(null);
         frame.add(this.sky, BorderLayout.CENTER);
 
-        this.ground = new JPanel();
-        this.ground.setBackground(Color.GREEN);
+        frame.revalidate();
+        frame.repaint();
+
+        BufferedImage groundImage = null;
+        try {
+            groundImage = ImageIO.read(new File("assets/moonTexture.png"));
+        } catch (IOException ignored) {}
+        final BufferedImage groundFinalImage = groundImage;
+        this.ground = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.drawImage(groundFinalImage, 0, 0, this);
+            }
+        };
         int GROUND_HEIGHT = 50;
         this.ground.setLayout(null);
         this.ground.setPreferredSize(new Dimension(frame.getWidth(), GROUND_HEIGHT));
@@ -42,17 +70,18 @@ public class Game {
         new Thread(terrorist).start();
 
         this.score = new JLabel("Score: 0");
+        this.score.setFont(new Font("Monospaced", Font.BOLD, 15));
+        this.score.setForeground(Color.WHITE);
         this.score.setLocation(0, 0);
         this.score.setSize(100, 20);
-        this.score.setForeground(Color.BLACK);
         this.sky.add(this.score);
 
         int GROUND_WIDTH = frame.getWidth();
-        Cannon c = new Cannon(
-                GROUND_WIDTH / 2, frame.getHeight() - 50 - 80,
-                this.sky, terrorist, this.gameOver, this.score, this.paused);
-        frame.addKeyListener(c);
-        new Thread(c).start();
+        this.cannon = new Cannon(
+                GROUND_WIDTH / 2, frame.getContentPane().getHeight(), 80, GROUND_HEIGHT,
+                this.sky, terrorist, this.gameOver, this.score, this.paused, terroristAttackSpeed);
+        this.cannon.setupKeyBindings(this.frame.getRootPane());
+        new Thread(this.cannon).start();
 
         // ESC key listener for pause
         frame.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -64,7 +93,6 @@ public class Game {
                     paused[0] = !paused[0];
                     if (paused[0]) {
                         sky.add(pauseScreen);
-                        sky.setComponentZOrder(pauseScreen, 0);
                     } else {
                         sky.remove(pauseScreen);
                     }
@@ -77,7 +105,7 @@ public class Game {
 
         //game over watcher
         new Thread(() -> {
-            while (!gameOver[0]) {
+            while (!this.gameOver[0]) {
                 try { Thread.sleep(200); } catch (InterruptedException ignored) {}
             }
             showEndScreen();
@@ -86,7 +114,7 @@ public class Game {
 
     public void start() {
         StartScreen startScreen = new StartScreen(this.frame, this);
-        this.frame.add(startScreen, BorderLayout.CENTER);
+        this.frame.add(startScreen);
         this.frame.setVisible(true);
     }
 
@@ -94,11 +122,8 @@ public class Game {
         SwingUtilities.invokeLater(() -> {
             score.setVisible(false);
             frame.getContentPane().removeAll();
-            frame.setLayout(new BorderLayout());
             EndScreen endScreen = new EndScreen(frame, score, this);
-            frame.add(endScreen, BorderLayout.CENTER);
-            frame.revalidate();
-            frame.repaint();
+            frame.add(endScreen);
         });
     }
 }

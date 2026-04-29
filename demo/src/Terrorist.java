@@ -28,7 +28,7 @@ public class Terrorist implements Runnable{
             launchBomb();
         }
         while (!gameOver[0]) {
-            if (paused[0]) {
+            if (this.paused[0]) {
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {

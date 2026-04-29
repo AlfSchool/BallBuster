@@ -1,90 +1,104 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import java.awt.event.ActionEvent;
+import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
+import javax.swing.KeyStroke;
 
-public class Cannon extends JPanel implements KeyListener, Runnable {
-    private int x;
-    private int y;
+public class Cannon extends JPanel implements Runnable {
     private JPanel sky;
     private Terrorist terrorist;
+    private double terroristAttackSpeedIncrease;
     private ArrayList<Bomb> bombs;
     private boolean[] gameOver;
     private boolean[] paused;
     private JLabel score;
 
-    public Cannon(int x, int y, JPanel sky, Terrorist terrorist, boolean[] gameOver, JLabel score, boolean[] paused) {
+    private boolean movingLeft;
+    private boolean movingRight;
+    private int x;
+    private int y;
+
+
+    public Cannon(int x, int frameHeight, int cannonHeight, int groundHeight, JPanel sky, Terrorist terrorist, boolean[] gameOver, JLabel score, boolean[] paused, double terroristAttackSpeedIncrease) {
         sky.add(this);
+        this.x = x + this.getWidth();
+        this.y = frameHeight - cannonHeight;
         this.setLocation(x, y);
-        this.setSize(200, 400);
-        this.x = x;
-        this.y = y;
+        this.setSize(15, groundHeight);
         this.gameOver = gameOver;
         this.paused = paused;
         this.sky = sky;
         this.terrorist = terrorist;
+        this.terroristAttackSpeedIncrease = terroristAttackSpeedIncrease;
         this.bombs = terrorist.getBombs();
         this.score = score;
     }
 
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        g.setColor(Color.DARK_GRAY);
+        g.fillRect(0, 0, this.getWidth(), this.getHeight());
+    }
+
     private void moveLeft() {
-        int step = 10;
+        int step = 3;
         this.x -= step;
     }
 
     private void moveRight() {
-        int step = 10;
+        int step = 3;
         this.x += step;
-    }
-
-    @Override
-    protected void paintComponent(Graphics g) {
-        g.setColor(Color.BLACK);
-        g.fillRect(0, 0, 10, 40);
     }
 
     @Override
     public void run() {
         while (!this.gameOver[0]) {
+            if (!this.paused[0]) {
+                if (movingLeft) moveLeft();
+                if (movingRight) moveRight();
+            }
+            try {
+                Thread.sleep(16);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
             this.setLocation(this.x, this.y);
         }
     }
 
     public void shoot() {
-        Cannon.Ball b = new Cannon.Ball(this.x, this.y, 10, this.sky, this.bombs, this.score, this.paused);
+        Cannon.Ball b = new Cannon.Ball(this.x + this.getWidth() / 4, this.y, 10, this.sky, this.bombs, this.score, this.paused);
         sky.add(b);
         Thread cannonBall = new Thread(b);
         cannonBall.start();
-        this.terrorist.newBombsSpeed += 0.5;
+        this.terrorist.newBombsSpeed += terroristAttackSpeedIncrease;
     }
 
-    @Override
-    public void keyTyped(KeyEvent e) {
-        if (this.gameOver[0]) {
-            return;
-        }
-        if (this.paused[0]) {
-            return;
-        }
-        if ((int)e.getKeyChar() == 100) {
-            moveRight();
-        }
-        if ((int)e.getKeyChar() == 97) {
-            moveLeft();
-        }
-        if ((int)e.getKeyChar() == 32) {
-            shoot();
-        }
-    }
+    public void setupKeyBindings(JComponent component) {
+        InputMap im = component.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        ActionMap am = component.getActionMap();
 
-    @Override
-    public void keyPressed(KeyEvent e) {
-    }
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, false), "moveLeft");
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, false), "moveRight");
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0, false), "moveLeft");
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_D, 0, false), "moveRight");
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0, false), "shoot");
 
-    @Override
-    public void keyReleased(KeyEvent e) {
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, true), "stopLeft");
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, true), "stopRight");
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0, true), "stopLeft");
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_D, 0, true), "stopRight");
 
+        am.put("moveLeft",  new AbstractAction() { public void actionPerformed(ActionEvent e) { if (!paused[0] && !gameOver[0]) movingLeft = true; } });
+        am.put("moveRight", new AbstractAction() { public void actionPerformed(ActionEvent e) { if (!paused[0] && !gameOver[0]) movingRight = true; } });
+        am.put("shoot",     new AbstractAction() { public void actionPerformed(ActionEvent e) { if (!paused[0] && !gameOver[0]) shoot(); } });
+        am.put("stopLeft",  new AbstractAction() { public void actionPerformed(ActionEvent e) { movingLeft = false; } });
+        am.put("stopRight", new AbstractAction() { public void actionPerformed(ActionEvent e) { movingRight = false; } });
     }
 
     class Ball extends JPanel implements Runnable{
@@ -105,9 +119,11 @@ public class Cannon extends JPanel implements KeyListener, Runnable {
             this.sky = sky;
             this.bombs = bombs;
             this.score = score;
-            this.sky.add(this);
             this.paused = paused;
+            this.setVisible(false);
+            this.setLocation(this.x, this.y);
             this.setSize(10, 10);
+            this.sky.add(this);
         }
 
         public boolean collided() {
@@ -129,10 +145,13 @@ public class Cannon extends JPanel implements KeyListener, Runnable {
         protected void paintComponent(Graphics g) {
             g.setColor(Color.BLACK);
             g.fillOval(0, 0, 10, 10);
+            g.setColor(Color.RED);
+            g.drawOval(0, 0, 10, 10);
         }
 
         @Override
         public void run() {
+            this.setVisible(true);
             while (y > 0 && !this.collided()) {
                 if (this.paused[0]) {
                     try {

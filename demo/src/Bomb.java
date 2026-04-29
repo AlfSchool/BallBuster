@@ -12,6 +12,7 @@ public class Bomb extends JPanel implements Runnable {
     private boolean hasExploded;
     private boolean[] gameOver;
     private boolean[] paused;
+    final int radius = 15;
 
     public Bomb(double x, double y, double speed, JPanel sky, JPanel ground, boolean[] gameOver, boolean[] paused) {
         this.x = (int) x;
@@ -22,7 +23,7 @@ public class Bomb extends JPanel implements Runnable {
         this.sky = sky;
         this.ground = ground;
         this.hasExploded = false;
-        this.setSize(10, 10);
+        this.setSize(radius, radius);
         this.setLocation(this.x, this.y);
         this.setVisible(false);
         this.sky.add(this);
@@ -31,7 +32,7 @@ public class Bomb extends JPanel implements Runnable {
     @Override
     public void paintComponent (Graphics g){
         g.setColor(Color.RED);
-        g.fillOval(0, 0, 10, 10);
+        g.fillOval(0, 0, radius, radius);
     }
 
     public void explode() {
@@ -44,7 +45,8 @@ public class Bomb extends JPanel implements Runnable {
     @Override
     public void run() {
         this.setVisible(true);
-        while (!gameOver[0] && (!ground.getBounds().intersects(this.getBounds()) || this.hasExploded)) {
+        final int skyHeight = 760;
+        while (!gameOver[0] && ((this.y < skyHeight) || this.hasExploded)) {
             if (this.paused[0]) {
                 try {
                     Thread.sleep(100);
@@ -61,7 +63,7 @@ public class Bomb extends JPanel implements Runnable {
             }
             this.setLocation(x, y);
         }
-        //this if happens just for the exploded cannon ball and not for each of them
+        //if exploded cannon ball (not for everyone)
         if (!this.gameOver[0]) {
             this.gameOver[0] = true;
             this.hasExploded = true;
