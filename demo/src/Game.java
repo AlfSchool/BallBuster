@@ -78,7 +78,7 @@ public class Game {
 
         int GROUND_WIDTH = frame.getWidth();
         this.cannon = new Cannon(
-                GROUND_WIDTH / 2, frame.getContentPane().getHeight(), 80, GROUND_HEIGHT,
+                GROUND_WIDTH / 2, frame.getContentPane().getHeight(), 100, GROUND_HEIGHT,
                 this.sky, terrorist, this.gameOver, this.score, this.paused, terroristAttackSpeed);
         this.cannon.setupKeyBindings(this.frame.getRootPane());
         new Thread(this.cannon).start();

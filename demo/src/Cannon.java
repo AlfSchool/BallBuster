@@ -28,7 +28,7 @@ public class Cannon extends JPanel implements Runnable {
         this.x = x + this.getWidth();
         this.y = frameHeight - cannonHeight;
         this.setLocation(x, y);
-        this.setSize(15, groundHeight);
+        this.setSize(30, groundHeight);
         this.gameOver = gameOver;
         this.paused = paused;
         this.sky = sky;
@@ -36,13 +36,18 @@ public class Cannon extends JPanel implements Runnable {
         this.terroristAttackSpeedIncrease = terroristAttackSpeedIncrease;
         this.bombs = terrorist.getBombs();
         this.score = score;
+        this.setOpaque(false);
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+        g.setColor(Color.BLACK);
+        g.fillRect(3, 0, this.getWidth() - 6, this.getHeight());
+        g.setColor(Color.GRAY);
+        g.drawRect(3, 0, this.getWidth() - 6, this.getHeight());
         g.setColor(Color.DARK_GRAY);
-        g.fillRect(0, 0, this.getWidth(), this.getHeight());
+        // Draw the two smaller rectangles at the bottom with borders
     }
 
     private void moveLeft() {
@@ -72,7 +77,8 @@ public class Cannon extends JPanel implements Runnable {
     }
 
     public void shoot() {
-        Cannon.Ball b = new Cannon.Ball(this.x + this.getWidth() / 4, this.y, 10, this.sky, this.bombs, this.score, this.paused);
+        int ballRadius = 5;
+        Cannon.Ball b = new Cannon.Ball(this.x + this.getWidth() / 2 - ballRadius, this.y, 10, this.sky, this.bombs, this.score, this.paused);
         sky.add(b);
         Thread cannonBall = new Thread(b);
         cannonBall.start();

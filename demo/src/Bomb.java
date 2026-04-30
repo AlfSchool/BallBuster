@@ -1,5 +1,9 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 public class Bomb extends JPanel implements Runnable {
     private int x;
@@ -7,32 +11,38 @@ public class Bomb extends JPanel implements Runnable {
     private double speed;
 
     private JPanel sky;
-    private JPanel ground;
 
     private boolean hasExploded;
     private boolean[] gameOver;
     private boolean[] paused;
     final int radius = 15;
+    private BufferedImage bombImage;
 
-    public Bomb(double x, double y, double speed, JPanel sky, JPanel ground, boolean[] gameOver, boolean[] paused) {
+    public Bomb(double x, double y, double speed, JPanel sky, boolean[] gameOver, boolean[] paused) {
         this.x = (int) x;
         this.y = (int) y;
         this.speed = speed;
         this.gameOver = gameOver;
         this.paused = paused;
         this.sky = sky;
-        this.ground = ground;
         this.hasExploded = false;
         this.setSize(radius, radius);
         this.setLocation(this.x, this.y);
         this.setVisible(false);
         this.sky.add(this);
+        this.bombImage = null;
+        try {
+            this.bombImage = ImageIO.read(new File("assets/bomb.png"));
+        } catch (IOException ignored) {}
+        this.setOpaque(false);
     }
 
     @Override
     public void paintComponent (Graphics g){
+        super.paintComponent(g);
         g.setColor(Color.RED);
-        g.fillOval(0, 0, radius, radius);
+        g.fillOval(1, 2, 12, 12);
+        g.drawImage(bombImage, 0, 0, radius, radius, null);
     }
 
     public void explode() {

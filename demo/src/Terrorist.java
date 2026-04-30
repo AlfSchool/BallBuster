@@ -48,7 +48,7 @@ public class Terrorist implements Runnable{
     private void launchBomb() {
         Bomb b = new Bomb(
                 Math.random() * (skyWidth - 30) + 10, 0, Math.random() * newBombsSpeed,
-                this.sky, this.ground, this.gameOver, this.paused
+                this.sky, this.gameOver, this.paused
         );
         this.bombs.add(b);
         new Thread(b).start();
