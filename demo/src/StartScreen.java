@@ -56,7 +56,6 @@ public class StartScreen extends JPanel {
         startBtn.addActionListener(e -> {
             frame.remove(this);
             game.init(frame, terroristAttackSpeed[0]);
-            frame.requestFocusInWindow();
         });
         gbc.gridy = 3;
         this.add(startBtn, gbc);

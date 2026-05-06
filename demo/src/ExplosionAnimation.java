@@ -80,11 +80,8 @@ public class ExplosionAnimation extends JPanel implements Runnable {
         });
 
         for (int i = 0; i <= 4; i++) {
-            final int f = i;
-            SwingUtilities.invokeLater(() -> {
-                this.frame = f;
-                this.repaint();
-            });
+            this.frame = i;
+            this.repaint();
             try {
                 Thread.sleep(80);
             } catch (InterruptedException e) {
