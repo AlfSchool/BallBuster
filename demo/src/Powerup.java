@@ -3,9 +3,9 @@ import java.awt.*;
 
 public class Powerup extends JPanel implements Runnable {
     public enum Type {
-        SPEED_BOOST,    // Green - permanent cannon movement speed
-        BALL_SPEED,     // Blue - permanent cannon ball travel speed
-        SIZE_UP         // Yellow - temporary cannon AND ball size increase
+        SPEED_BOOST, //green
+        BALL_SPEED, //blue
+        SIZE_UP //yellow
     }
 
     private int x;
@@ -38,25 +38,24 @@ public class Powerup extends JPanel implements Runnable {
     @Override
     public void paintComponent(Graphics g) {
         switch (type) {
-            case SPEED_BOOST -> g.setColor(new Color(0, 255, 100));   // Green
-            case BALL_SPEED -> g.setColor(new Color(0, 150, 255));     // Blue
-            case SIZE_UP -> g.setColor(new Color(255, 220, 0));       // Yellow
+            case SPEED_BOOST -> g.setColor(new Color(0, 255, 100));   
+            case BALL_SPEED -> g.setColor(new Color(0, 150, 255));  
+            case SIZE_UP -> g.setColor(new Color(255, 220, 0));    
         }
         g.fillOval(0, 0, radius, radius);
         g.setColor(Color.WHITE);
         g.drawOval(0, 0, radius - 1, radius - 1);
-        // Draw icon letter
         g.setColor(Color.BLACK);
         g.setFont(new Font("Monospaced", Font.BOLD, 12));
         String letter = switch (type) {
             case SPEED_BOOST -> "S";
             case BALL_SPEED -> "B";
-            case SIZE_UP -> "G";  // G for "Giant"
+            case SIZE_UP -> "G"; 
         };
         FontMetrics fm = g.getFontMetrics();
         int textX = (radius - fm.stringWidth(letter)) / 2;
         int textY = ((radius - fm.getHeight()) / 2) + fm.getAscent();
-        g.drawString(letter, textX, textY);
+        g.drawString(letter, textX, textY); //label would generate visual glitches
     }
 
     public void collect() {
@@ -86,7 +85,9 @@ public class Powerup extends JPanel implements Runnable {
             landed = true;
         }
         SwingUtilities.invokeLater(() -> {
-            if (!collected) this.sky.remove(this);
+            if (!collected) {
+                this.sky.remove(this);
+            }    
         });
     }
 }

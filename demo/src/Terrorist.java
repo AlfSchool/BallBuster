@@ -73,7 +73,7 @@ public class Terrorist implements Runnable{
     private void launchPowerup() {
         Powerup.Type[] types = Powerup.Type.values();
         Powerup.Type type = types[random.nextInt(types.length)];
-        double speed = 2 + Math.random() * 3; // Slower than bombs
+        double speed = 2 + Math.random() * 3; 
         Powerup p = new Powerup(
                 Math.random() * (skyWidth - 50) + 10, 0, speed,
                 type, this.sky, this.gameOver, this.paused

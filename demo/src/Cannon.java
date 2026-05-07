@@ -26,7 +26,7 @@ public class Cannon extends JPanel implements Runnable {
 
     // Powerup effects
     private double moveSpeedMultiplier = 1.0;
-    private double ballSpeedMultiplier = 1.0;   // How fast balls TRAVEL upward
+    private double ballSpeedMultiplier = 1.0; 
     private boolean sizeBoostActive = false;
     private int baseWidth = 15;
     private int baseHeight;
@@ -59,7 +59,7 @@ public class Cannon extends JPanel implements Runnable {
         super.paintComponent(g);
         g.setColor(Color.DARK_GRAY);
         g.fillRect(0, 0, this.getWidth(), this.getHeight());
-        // Add a colored stripe to indicate active powerups
+        //colored strip
         if (moveSpeedMultiplier > 1.0) {
             g.setColor(new Color(0, 255, 100));
             g.fillRect(0, 0, this.getWidth(), 3);
@@ -115,7 +115,7 @@ public class Cannon extends JPanel implements Runnable {
             this.powerups, 
             this.score, 
             this.paused,
-            sizeBoostActive  // Pass whether size boost is active
+            sizeBoostActive 
         );
         sky.add(b);
         Thread cannonBall = new Thread(b);
@@ -265,7 +265,6 @@ public class Cannon extends JPanel implements Runnable {
         }
 
         public boolean collided() {
-            // Check bomb collision
             for (int i = 0; i < this.bombs.size(); i++) {
                 if (this.bombs.get(i).getBounds().intersects(this.getBounds())) {
                     this.bombs.get(i).explode();
@@ -277,7 +276,6 @@ public class Cannon extends JPanel implements Runnable {
                     return true;
                 }
             }
-            // Check powerup collision
             for (int i = 0; i < this.powerups.size(); i++) {
                 Powerup p = this.powerups.get(i);
                 if (!p.isCollected() && p.getBounds().intersects(this.getBounds())) {
@@ -298,7 +296,6 @@ public class Cannon extends JPanel implements Runnable {
             g.fillOval(0, 0, size, size);
             g.setColor(Color.RED);
             g.drawOval(0, 0, size, size);
-            // If giant, add a yellow ring
             if (giantBall) {
                 g.setColor(new Color(255, 220, 0));
                 g.drawOval(1, 1, size - 2, size - 2);

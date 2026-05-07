@@ -9,7 +9,6 @@ public class PauseScreen extends JPanel {
         this.setSize(width, height);
         this.setLocation(0, 0);
 
-        // dark transparent overlay
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.gridx = 0;

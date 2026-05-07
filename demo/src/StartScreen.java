@@ -10,14 +10,12 @@ public class StartScreen extends JPanel {
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.gridx = 0;
 
-        // Title
         JLabel title = new JLabel("Falling Bombs");
         title.setFont(new Font("Monospaced", Font.BOLD, 36));
         title.setForeground(Color.RED);
         gbc.gridy = 0;
         this.add(title, gbc);
 
-        // Difficulty label
         JLabel diffLabel = new JLabel("Difficulty:");
         diffLabel.setFont(new Font("Monospaced", Font.PLAIN, 16));
         diffLabel.setForeground(Color.WHITE);
@@ -25,7 +23,6 @@ public class StartScreen extends JPanel {
         gbc.gridy = 1;
         this.add(diffLabel, gbc);
 
-        // Difficulty buttons
         JPanel diffPanel = new JPanel();
         diffPanel.setOpaque(false);
         String[] difficulties = {"Easy", "Medium", "Impossible"};
@@ -47,7 +44,6 @@ public class StartScreen extends JPanel {
         gbc.gridy = 2;
         this.add(diffPanel, gbc);
 
-        // Start button
         JButton startBtn = new JButton("Start Game");
         startBtn.setFont(new Font("Monospaced", Font.BOLD, 18));
         startBtn.setBackground(new Color(11, 14, 23));
@@ -60,7 +56,6 @@ public class StartScreen extends JPanel {
         gbc.gridy = 3;
         this.add(startBtn, gbc);
 
-        // Quit button
         JButton quitBtn = new JButton("Quit");
         quitBtn.setFont(new Font("Monospaced", Font.BOLD, 18));
         quitBtn.setBackground(Color.RED);
